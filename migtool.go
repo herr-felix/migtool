@@ -243,7 +243,6 @@ func (c *Client) execute(sql []byte) error {
 		return err
 	}
 	for _, query := range queries {
-		fmt.Println(string(query))
 		_, err := tx.Exec(string(query))
 		if err != nil {
 			tx.Rollback()
