@@ -171,10 +171,18 @@ func (c *Client) MigrateDown(toVersion int) error {
 			if err != nil {
 				return err
 			}
-			err = c.SetVersion(m.version)
-			if err != nil {
-				return err
+			if i == 0 {
+				err = c.SetVersion(0)
+				if err != nil {
+					return err
+				}
+			} else {
+				err = c.SetVersion(mInfo.migrations[i-1].version)
+				if err != nil {
+					return err
+				}
 			}
+
 		}
 	} else {
 		return errors.New("version number is not smaller than current version")
