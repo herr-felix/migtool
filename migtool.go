@@ -115,7 +115,6 @@ func (c *Client) MigrateUp(toVersion int) error {
 	if err != nil {
 		return err
 	}
-	lastVersion := mInfo.currentVersion
 	if toVersion > mInfo.currentVersion {
 		for _, m := range mInfo.migrations {
 			if m.version <= mInfo.currentVersion {
@@ -135,13 +134,16 @@ func (c *Client) MigrateUp(toVersion int) error {
 			if err != nil {
 				return err
 			}
-			lastVersion = m.version
+			err = c.SetVersion(m.version)
+			if err != nil {
+				return err
+			}
 		}
 	} else {
 		return errors.New("version number is not greater than current version")
 	}
 
-	return c.SetVersion(lastVersion)
+	return nil
 }
 
 func (c *Client) MigrateDown(toVersion int) error {
@@ -149,7 +151,6 @@ func (c *Client) MigrateDown(toVersion int) error {
 	if err != nil {
 		return err
 	}
-	lastVersion := mInfo.currentVersion
 	if toVersion < mInfo.currentVersion {
 		for i := len(mInfo.migrations) - 1; i >= 0; i-- {
 			m := mInfo.migrations[i]
@@ -170,17 +171,16 @@ func (c *Client) MigrateDown(toVersion int) error {
 			if err != nil {
 				return err
 			}
-			if i == 0 {
-				lastVersion = 0
-			} else {
-				lastVersion = m.version
+			err = c.SetVersion(m.version)
+			if err != nil {
+				return err
 			}
 		}
 	} else {
 		return errors.New("version number is not smaller than current version")
 	}
 
-	return c.SetVersion(lastVersion)
+	return nil
 }
 
 func (c *Client) New(name string, tables ...string) error {
