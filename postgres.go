@@ -56,3 +56,7 @@ func (c *Client) open() error {
 	c.db = db
 	return nil
 }
+
+func (c *Client) Disconnect() error {
+	return c.db.Close()
+}
