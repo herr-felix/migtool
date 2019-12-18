@@ -157,7 +157,7 @@ func (c *Client) MigrateDown(toVersion int) error {
 			if m.version > mInfo.currentVersion {
 				continue
 			}
-			if m.version < toVersion {
+			if m.version <= toVersion {
 				continue
 			}
 			if m.direction != "down" {
