@@ -1,7 +1,6 @@
 package migtool
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -245,18 +244,6 @@ func dropTables(tables []string) []byte {
 }
 
 func (c *Client) execute(sql []byte) error {
-	queries := bytes.Split(sql, []byte(";"))
-	tx, err := c.db.Beginx()
-	if err != nil {
-		return err
-	}
-	for _, query := range queries {
-		_, err := tx.Exec(string(query))
-		if err != nil {
-			tx.Rollback()
-			return err
-		}
-	}
-	tx.Commit()
-	return nil
+	_, err := c.db.Exec(string(sql))
+	return err
 }
