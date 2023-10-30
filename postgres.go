@@ -20,27 +20,17 @@ func newClient() *Client {
 	return c
 }
 
-func Connect() (*Client, error) {
+func Connect(connectionString string) (*Client, error) {
 	c := newClient()
-	err := c.open()
+	err := c.open(connectionString)
 	if err != nil {
 		return nil, err
 	}
 	return c, nil
 }
 
-func (c *Client) open() error {
-	config := loadConfig()
-	// Get DB config from environment variables
-	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		config.Host,
-		config.Port,
-		config.User,
-		config.Password,
-		config.DB,
-	)
-	db, err := sqlx.Connect("postgres", psqlInfo)
+func (c *Client) open(connectionString string) error {
+	db, err := sqlx.Connect("postgres", connectionString)
 	if err != nil {
 		return err
 	}
